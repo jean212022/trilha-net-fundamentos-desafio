@@ -1,65 +1,97 @@
+using static System.Console;
+
 namespace DesafioFundamentos.Models
 {
     public class Estacionamento
     {
-        private decimal precoInicial = 0;
-        private decimal precoPorHora = 0;
-        private List<string> veiculos = new List<string>();
+        public decimal ValorInicial { get; set; }
+        public decimal PrecoHora { get; set; }
+        public List<string> Carros { get; set; }
 
-        public Estacionamento(decimal precoInicial, decimal precoPorHora)
-        {
-            this.precoInicial = precoInicial;
-            this.precoPorHora = precoPorHora;
+        public Estacionamento(){
+            WriteLine("Seja bem vindo ao sistema de estacionamento!");
+            ValorInicial = LendoValoresIniciais("Digite o preço inicial:");
+            PrecoHora = LendoValoresIniciais("Agora digite o preco por hora:");
+            Carros = new List<string>();
         }
 
-        public void AdicionarVeiculo()
+        public decimal LendoValoresIniciais(string mensagem)
         {
-            // Implementado!!!!!
-            Console.WriteLine("Digite a placa do veículo para estacionar:");
+            decimal valor;
+            do
+            {
+                WriteLine(mensagem); 
+            } while(!decimal.TryParse(ReadLine(), out valor));
+            return valor;
         }
-
-        public void RemoverVeiculo()
-        {
-            Console.WriteLine("Digite a placa do veículo para remover:");
-
-            // Pedir para o usuário digitar a placa e armazenar na variável placa
-            // *IMPLEMENTE AQUI*
-            string placa = "";
-
-            // Verifica se o veículo existe
-            if (veiculos.Any(x => x.ToUpper() == placa.ToUpper()))
+        public void CadastrarVeiculo(){
+            string? carro;
+            while(true)
             {
-                Console.WriteLine("Digite a quantidade de horas que o veículo permaneceu estacionado:");
-
-                // TODO: Pedir para o usuário digitar a quantidade de horas que o veículo permaneceu estacionado,
-                // TODO: Realizar o seguinte cálculo: "precoInicial + precoPorHora * horas" para a variável valorTotal                
-                // *IMPLEMENTE AQUI*
-                int horas = 0;
-                decimal valorTotal = 0; 
-
-                // TODO: Remover a placa digitada da lista de veículos
-                // *IMPLEMENTE AQUI*
-
-                Console.WriteLine($"O veículo {placa} foi removido e o preço total foi de: R$ {valorTotal}");
+                WriteLine("Digite a placa do veículo para estacionar:");
+                carro = ReadLine();
+                if(!String.IsNullOrEmpty(carro))
+                {
+                    break;
+                }             
+                WriteLine("A placa não pode ser vazia");   
             }
-            else
-            {
-                Console.WriteLine("Desculpe, esse veículo não está estacionado aqui. Confira se digitou a placa corretamente");
+            Carros.Add(carro);
+        }
+        public void ListarVeiculos(){
+            WriteLine("Os veículos estacionados são:");
+            foreach(var carro in Carros){
+                WriteLine(carro);
             }
         }
-
-        public void ListarVeiculos()
-        {
-            // Verifica se há veículos no estacionamento
-            if (veiculos.Any())
+        public void RemoverVeiculo(){
+            WriteLine("Digite a placa do veículo para remover:");
+            string? veiculo = ReadLine();
+            if(String.IsNullOrEmpty(veiculo) || !Carros.Remove(veiculo))
             {
-                Console.WriteLine("Os veículos estacionados são:");
-                // TODO: Realizar um laço de repetição, exibindo os veículos estacionados
-                // *IMPLEMENTE AQUI*
+                WriteLine("Veículo inexistênte!");
+                return;
             }
-            else
+            uint horas;
+            while(true)
             {
-                Console.WriteLine("Não há veículos estacionados.");
+                WriteLine("Digite a quantidade de horas que o veículo permaneceu estacionado:");
+                if(!uint.TryParse(ReadLine(), out horas)){
+                    WriteLine("Erro: Quantidade de horas inexistente!");
+                } else {
+                    break;
+                }
+            }
+            decimal preco = ValorInicial + PrecoHora * horas;
+            WriteLine($"O veículo {veiculo} foi removido e o preco total foi de: R${preco}");
+        }
+        public void Menu(){
+            while(true){
+                Clear();
+                WriteLine("Digite a sua opção:");
+                WriteLine("1 - Cadastrar veículo");
+                WriteLine("2 - Remover veículo");
+                WriteLine("3 - Listar veículos");
+                WriteLine("4 - Encerrar");
+                string? resp = ReadLine();
+                if(string.Equals(resp, "1"))
+                {
+                    CadastrarVeiculo();
+                } else if(string.Equals(resp, "2"))
+                {
+                    RemoverVeiculo();
+                } else if(string.Equals(resp, "3"))
+                {
+                    ListarVeiculos();
+                } else if(string.Equals(resp, "4"))
+                {
+                    WriteLine("Pressione uma tecla para continuar"); ReadLine();
+                    break;
+                } else 
+                {
+                    WriteLine("Opção Invalida!");
+                }
+                WriteLine("Pressione uma tecla para continuar"); ReadLine();
             }
         }
     }
